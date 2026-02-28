@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoopfull | Strawberry Ice Cream</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-light: #F0F8FF;
+            --bg-mid: #D6EAF8;
+            --text-dark: #1F2833;
+            --text-light: #4A5B69;
+            --accent-primary: #5DADE2;
+            --accent-secondary: #F5B041;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: clamp(1.2rem, 2vw, 1.5rem);
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: clamp(15px, 3vw, 40px);
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: clamp(0.8rem, 1.2vw, 1rem);
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.6;
+        }
+
+        #dynamic-product {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: clamp(160px, 25vw, 280px);
+            z-index: 100;
+            pointer-events: none;
+            filter: drop-shadow(0 30px 30px rgba(0, 0, 0, 0.15));
+            will-change: transform, left, top;
+        }
+
+        .section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* --- 1. Hero Section --- */
+        .s-hero {
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        .hero-bg-text {
+            font-size: clamp(3rem, 14vw, 14vw);
+            font-weight: 900;
+            color: var(--accent-primary);
+            letter-spacing: -2px;
+            z-index: 1;
+            text-align: center;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .char {
+            display: inline-block;
+            transform-origin: center bottom;
+        }
+
+        /* --- 2. Story Section --- */
+        .s-story {
+            justify-content: flex-start;
+            padding: 0 5%;
+        }
+
+        .story-content {
+            width: 90%;
+            max-width: 500px;
+            z-index: 20;
+        }
+
+        .story-content h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 15px;
+            line-height: 1.1;
+            color: var(--text-dark);
+        }
+
+        .story-content h3 {
+            font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        .story-content p {
+            font-size: clamp(0.85rem, 1.2vw, 1rem);
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn-view {
+            background: var(--accent-primary);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .btn-view:hover {
+            opacity: 0.8;
+        }
+
+        /* --- 3. Customize Section --- */
+        .s-customize {
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .oval-backdrop {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: clamp(220px, 35vw, 400px);
+            height: clamp(340px, 50vw, 580px);
+            background: rgba(214, 234, 248, 0.4);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .cust-label {
+            position: absolute;
+            z-index: 10;
+            font-weight: 700;
+            font-size: clamp(0.75rem, 1.2vw, 1.1rem);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: clamp(100px, 16vw, 200px);
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        .cust-label .label-emoji {
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            margin-bottom: 4px;
+        }
+
+        .cust-label .label-text {
+            margin-bottom: 6px;
+        }
+
+        .cust-label svg {
+            width: clamp(50px, 8vw, 100px);
+            height: clamp(30px, 5vw, 60px);
+        }
+
+        /* Top labels: text above, arrow below pointing down-in */
+        .label-tl {
+            top: 15%;
+            left: 5%;
+            align-items: flex-end;
+        }
+
+        .label-tr {
+            top: 15%;
+            right: 5%;
+            align-items: flex-start;
+        }
+
+        /* Bottom labels: arrow above pointing up-in, text below */
+        .label-bl {
+            bottom: 15%;
+            left: 5%;
+            align-items: flex-end;
+        }
+
+        .label-br {
+            bottom: 15%;
+            right: 5%;
+            align-items: flex-start;
+        }
+
+        /* --- 4. Cards Section --- */
+        .s-cards {
+            flex-direction: column;
+            justify-content: center;
+            padding: clamp(40px, 8vw, 100px) 5%;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+            gap: clamp(30px, 3vw, 25px);
+            width: 100%;
+            max-width: 1100px;
+            z-index: 20;
+        }
+
+        .card {
+            border-radius: 25px;
+            padding: clamp(20px, 3vw, 30px);
+            color: #fff;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            will-change: transform, opacity;
+            width: 100%;
+            flex: 1;
+            min-height: clamp(280px, 30vw, 380px);
+        }
+
+        .card-left {
+            background: linear-gradient(145deg, #d39d6e, #b87b4b);
+        }
+
+        .card-center {
+            background: linear-gradient(145deg, #85C1E9, #2874A6);
+        }
+
+        .card-right {
+            background: linear-gradient(145deg, #6c4228, #3f2211);
+        }
+
+        .card-img-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: clamp(140px, 20vw, 220px);
+        }
+
+        .card-img-wrap img {
+            width: clamp(120px, 16vw, 200px);
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.3));
+            border-radius: 16px;
+        }
+
+        .card h3 {
+            font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            margin-top: auto;
+        }
+
+        .card p {
+            font-size: clamp(0.75rem, 1vw, 0.85rem);
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* --- 5. Map Section --- */
+        .s-map-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .map-bg {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+        }
+
+        .map-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(93, 173, 226, 0.45);
+            background-blend-mode: multiply;
+            z-index: 1;
+        }
+
+        .wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            line-height: 0;
+            z-index: 10;
+        }
+
+        .wave svg {
+            width: calc(100% + 1.3px);
+            height: clamp(60px, 10vw, 120px);
+            display: block;
+        }
+
+        .wave-top {
+            top: -1px;
+        }
+
+        .wave-bottom {
+            bottom: -1px;
+            transform: rotate(180deg);
+        }
+
+        .map-panel {
+            position: absolute;
+            left: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: clamp(260px, 35vw, 380px);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            z-index: 15;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: clamp(25px, 4vw, 50px);
+            color: #fff;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .map-panel p {
+            margin-bottom: clamp(15px, 2vw, 25px);
+            font-size: clamp(0.8rem, 1.1vw, 1rem);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .map-icon {
+            font-size: 1.4rem;
+            margin-top: 2px;
+        }
+
+        .pin {
+            position: absolute;
+            top: 45%;
+            left: 55%;
+            width: clamp(30px, 4vw, 45px);
+            height: clamp(30px, 4vw, 45px);
+            background: var(--accent-secondary);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            z-index: 5;
+            box-shadow: -5px 5px 15px rgba(245, 176, 65, 0.4);
+        }
+
+        .pin::after {
+            content: '';
+            width: 40%;
+            height: 40%;
+            background: #fff;
+            position: absolute;
+            top: 30%;
+            left: 30%;
+            border-radius: 50%;
+        }
+
+        /* --- 6. Footer --- */
+        footer {
+            background: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10vh 5% 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-top {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-top h2 {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            max-width: 100%;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .subscribe-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .subscribe-container label {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .subscribe {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--text-dark);
+            padding-bottom: 5px;
+            width: min(100%, 300px);
+        }
+
+        .subscribe input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-family: 'Poppins';
+            font-size: 0.9rem;
+            flex: 1;
+            color: var(--text-dark);
+        }
+
+        .subscribe button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .footer-mid {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-mid h3 {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-size: clamp(0.85rem, 1.1vw, 1rem);
+            font-weight: 500;
+        }
+
+        .footer-links span {
+            color: var(--text-dark);
+        }
+
+        .footer-bg-text {
+            font-size: clamp(8vw, 16vw, 16vw);
+            font-weight: 800;
+            color: var(--bg-mid);
+            text-align: center;
+            line-height: 0.75;
+            position: relative;
+            bottom: -2vh;
+            z-index: 1;
+            letter-spacing: -2px;
+            margin-top: auto;
+        }
+
+        /* === Tablet (768px+) === */
+        @media (min-width: 768px) {
+            .s-story {
+                padding: 0 8%;
+            }
+
+            .story-content {
+                width: 55%;
+            }
+
+            .cards-container {
+                flex-direction: row;
+                align-items: stretch;
+                gap: 25px;
+            }
+
+            .footer-top {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .footer-top h2 {
+                max-width: 450px;
+            }
+
+            .label-tl {
+                left: 8%;
+            }
+
+            .label-tr {
+                right: 8%;
+            }
+
+            .label-bl {
+                left: 8%;
+            }
+
+            .label-br {
+                right: 8%;
+            }
+        }
+
+        /* === Desktop (1024px+) === */
+        @media (min-width: 1024px) {
+            nav {
+                padding: 30px 5%;
+            }
+
+            .s-story {
+                padding: 0 10%;
+            }
+
+            .story-content {
+                width: 50%;
+            }
+
+            .label-tl {
+                left: 10%;
+            }
+
+            .label-tr {
+                right: 10%;
+            }
+
+            .label-bl {
+                left: 10%;
+            }
+
+            .label-br {
+                right: 10%;
+            }
+
+            .map-panel {
+                left: 8%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">Scoopfull</div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">About Us</a>
+            <a href="#">Contact Us</a>
+        </div>
+    </nav>
+
+    <img src="strawberry.png" id="dynamic-product" alt="Ice Cream Cone"
+        style="border-radius: 200px; filter: hue-rotate(210deg) saturate(1.2) brightness(1.1);">
+
+
+    <!-- 1. Hero -->
+    <section class="section s-hero">
+        <div class="hero-bg-text">
+            <span class="char">S</span><span class="char">K</span><span class="char">Y</span><span
+                class="char">&nbsp;</span><span class="char">B</span><span class="char">L</span><span
+                class="char">U</span><span class="char">E</span>
+        </div>
+    </section>
+
+    <!-- 2. Story -->
+    <section class="section s-story">
+        <div class="story-content">
+            <h2 class="reveal-text">Sky Cloud Delight</h2>
+            <h3 class="reveal-text">Rich. Creamy. Irresistibly Fresh.</h3>
+            <p class="reveal-text">Taste the nostalgia of sky-blue cotton candy blended into silky ice cream, fluffy
+                cupcakes, and golden waffles. It's more than dessert - it's a mood, a moment, a memory reborn in blue.
+            </p>
+            <div class="reveal-text">
+                <button class="btn-view">View More &rarr;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Customize -->
+    <section class="section s-customize">
+        <div class="oval-backdrop"></div>
+
+        <div class="cust-label label-tl">
+            <span class="label-emoji">🍓</span>
+            <span class="label-text">Farm-Fresh<br>Strawberries</span>
+            <svg viewBox="0 0 120 60" fill="none">
+                <path d="M15,10 Q60,45 105,45" stroke="var(--text-dark)" stroke-width="1.5" stroke-dasharray="5,4"
+                    fill="none" />
+                <polygon points="105,40 115,45 105,50" fill="var(--text-dark)" />
+            </svg>
+        </div>
+
+        <div class="cust-label label-tr">
+            <span class="label-emoji">👨‍🍳</span>
+            <span class="label-text">Handcrafted<br>Perfection</span>
+            <svg viewBox="0 0 120 60" fill="none">
+                <path d="M105,10 Q60,45 15,45" stroke="var(--text-dark)" stroke-width="1.5" stroke-dasharray="5,4"
+                    fill="none" />
+                <polygon points="15,40 5,45 15,50" fill="var(--text-dark)" />
+            </svg>
+        </div>
+
+        <div class="cust-label label-bl">
+            <svg viewBox="0 0 120 60" fill="none">
+                <path d="M15,50 Q60,15 105,15" stroke="var(--text-dark)" stroke-width="1.5" stroke-dasharray="5,4"
+                    fill="none" />
+                <polygon points="105,10 115,15 105,20" fill="var(--text-dark)" />
+            </svg>
+            <span class="label-text">Sprinkle<br>of Joy</span>
+            <span class="label-emoji">✨</span>
+        </div>
+
+        <div class="cust-label label-br">
+            <svg viewBox="0 0 120 60" fill="none">
+                <path d="M105,50 Q60,15 15,15" stroke="var(--text-dark)" stroke-width="1.5" stroke-dasharray="5,4"
+                    fill="none" />
+                <polygon points="15,10 5,15 15,20" fill="var(--text-dark)" />
+            </svg>
+            <span class="label-text">Wholesome<br>Ingredients</span>
+            <span class="label-emoji">🌿</span>
+        </div>
+    </section>
+
+    <!-- 4. Cards -->
+    <section class="section s-cards">
+        <div class="cards-container">
+            <div class="card card-left">
+                <div class="card-img-wrap">
+                    <img src="cupcake.png" alt="Golden Whirl">
+                </div>
+                <h3>Golden Whirl <span>&rarr;</span></h3>
+                <p>A swirl of caramelized bliss, baked to golden perfection. Where buttery warmth meets sweet delight.
+                </p>
+            </div>
+
+            <div class="card card-center" id="center-card">
+                <div class="card-img-wrap" id="center-card-img-area">
+                    <!-- dynamic product lands here -->
+                </div>
+                <h3>Sky Cloud Delight <span>&rarr;</span></h3>
+                <p>Taste the nostalgia of sky-blue cotton candy blended into silky ice cream.</p>
+            </div>
+
+            <div class="card card-right">
+                <div class="card-img-wrap">
+                    <img src="waffle.png" alt="ChocoRush">
+                </div>
+                <h3>ChocoRush Crunch <span>&rarr;</span></h3>
+                <p>Crispy waffle, creamy scoop, and melting choco chips — the ultimate flavor rush.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Map -->
+    <section class="section s-map-wrapper">
+        <div class="map-bg"></div>
+        <div class="map-overlay"></div>
+
+        <div class="wave wave-top">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path fill="#F0F8FF"
+                    d="M0,0V53.59c36.4,26.55,83.92,38.74,136.26,29.92,44.75-7.53,85.25-24.3,126-36.57,59-17.75,116-25,170-13,67,14.88,124,53.29,191,55,59,1.52,116-16.71,173-30,47-11,94-16,140-5.75,34,7.62,64,22.25,93,38,36,19.64,74,38.5,119,34,26-2.55,49-10.22,71-20.78V0Z">
+                </path>
+            </svg>
+        </div>
+
+        <div class="map-panel">
+            <p>
+                <span class="map-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                </span>
+                <span>Our office:<br>Kuibysheva St., 23<br>Republic of Belarus, Minsk</span>
+            </p>
+            <p>
+                <span class="map-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                        </path>
+                    </svg>
+                </span>
+                <span>+375(29) 865-05-05<br>+375(44) 865-05-05</span>
+            </p>
+            <p>
+                <span class="map-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </span>
+                <span>loremipsum@gmail.com</span>
+            </p>
+        </div>
+        <div class="pin"></div>
+
+        <div class="wave wave-bottom">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path fill="#FCE8E8"
+                    d="M0,0V53.59c36.4,26.55,83.92,38.74,136.26,29.92,44.75-7.53,85.25-24.3,126-36.57,59-17.75,116-25,170-13,67,14.88,124,53.29,191,55,59,1.52,116-16.71,173-30,47-11,94-16,140-5.75,34,7.62,64,22.25,93,38,36,19.64,74,38.5,119,34,26-2.55,49-10.22,71-20.78V0Z">
+                </path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- 6. Footer -->
+    <footer>
+        <div class="footer-top">
+            <h2>Join our world of swirls, scoops & smiles — one dessert at a time.</h2>
+            <div class="subscribe-container">
+                <label>Email Id:</label>
+                <div class="subscribe">
+                    <input type="email" placeholder="username@example.com">
+                    <button>&rarr;</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-mid">
+            <h3>Crafted With Love. Served With Joy.</h3>
+            <div class="footer-links">
+                <a href="#">Home</a> <span>|</span>
+                <a href="#">About Us</a> <span>|</span>
+                <a href="#">Our Stores</a> <span>|</span>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+
+        <div class="footer-bg-text">Scoopfull</div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Text Entrance Animation
+        gsap.from(".char", {
+            y: 100,
+            opacity: 0,
+            rotationX: -90,
+            duration: 1.2,
+            stagger: 0.05,
+            ease: "back.out(1.7)",
+            delay: 0.2
+        });
+
+        // Story Entrance Animation
+        gsap.fromTo(".reveal-text",
+            { opacity: 0, y: 40 },
+            {
+                scrollTrigger: {
+                    trigger: ".s-story",
+                    start: "top 60%"
+                },
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                stagger: 0.15,
+                ease: "power3.out"
+            }
+        );
+
+        // === Award-Winning Parallax Product Flow ===
+        // Single unified timeline — product lands on center card
+
+        // Product grand entrance
+        gsap.set("#dynamic-product", { opacity: 0, scale: 1.6, rotation: 12 });
+        gsap.to("#dynamic-product", {
+            opacity: 1, scale: 1, rotation: 0,
+            duration: 1.4, ease: "power3.out", delay: 0.3
+        });
+
+        // One continuous scroll-linked timeline for all product movement
+        const productTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".s-hero",
+                start: "top top",
+                endTrigger: ".s-cards",
+                end: "top 30%",
+                scrub: 1.5,
+            }
+        });
+
+        // Hero → Story: slide to the right
+        productTl.to("#dynamic-product", {
+            left: "78%", top: "45%", scale: 0.9, rotation: -8,
+            duration: 1
+        })
+            // Story → Customize: glide back to center, scale up
+            .to("#dynamic-product", {
+                left: "50%", top: "50%", scale: 1.1, rotation: 0,
+                duration: 1
+            })
+            // Customize → Cards: land on center card, overflow above it
+            .to("#dynamic-product", {
+                left: "50%",
+                top: "22%",
+                scale: 0.7,
+                rotation: 0,
+                duration: 1.2,
+                ease: "power2.inOut"
+            });
+
+        // Once parallax ends, pin the product to the page so it doesn't follow scroll
+        ScrollTrigger.create({
+            trigger: ".s-cards",
+            start: "top 30%",
+            onEnter: () => {
+                const el = document.getElementById("dynamic-product");
+                const rect = el.getBoundingClientRect();
+                el.style.position = "absolute";
+                el.style.top = (window.scrollY + rect.top) + "px";
+                el.style.left = rect.left + rect.width / 2 + "px";
+            },
+            onLeaveBack: () => {
+                const el = document.getElementById("dynamic-product");
+                el.style.position = "fixed";
+                el.style.top = "22%";
+                el.style.left = "50%";
+            }
+        });
+
+        // Cards Entrance Animation
+        gsap.fromTo(".card",
+            { x: -150, opacity: 0, rotation: -8, scale: 0.9 },
+            {
+                scrollTrigger: {
+                    trigger: ".s-cards",
+                    start: "top 70%"
+                },
+                x: 0,
+                opacity: 1,
+                rotation: 0,
+                scale: 1,
+                duration: 1.2,
+                stagger: 0.2,
+                ease: "back.out(1.2)"
+            }
+        );
+    </script>
+</body>
+
+</html>
